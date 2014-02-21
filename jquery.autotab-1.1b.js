@@ -45,8 +45,11 @@ $.fn.autotab_magic = function(focus) {
 	for(var i = 0; i < this.length; i++)
 	{
 		var n = i + 1;
-		var p = i - 1;
-
+		//for a visible target
+		while (!$(this[n]).is(":isvisible") && n < 0){
+			p--;
+		}
+		
 		if(i > 0 && n < this.length)
 			$(this[i]).autotab({ target: $(this[n]), previous: $(this[p]) });
 		else if(i > 0)
@@ -55,12 +58,16 @@ $.fn.autotab_magic = function(focus) {
 			$(this[i]).autotab({ target: $(this[n]) });
 
 		// Set the focus on the specified element
-		if(focus != null && (isNaN(focus) && focus == $(this[i]).attr('id')) || (!isNaN(focus) && focus == i))
-			$(this[i]).focus();
+		if(focus != null && (isNaN(focus) && focus == 
+		$(this[i]).attr('id')) || (!isNaN(focus) && focus == i))
+		$(this[i]).focus();
 	}
+	
+	$.extend(jQuery.expr[ ":" ], { isvisible : function (a) { return !(jQuery(a).is(':hidden') || jQuery(a).parents(':hidden').length); }});
 	return this;
 };
 
+	
 /**
  * autotab_remove automatically removes autotabbing with the
  * next and previous elements as provided by :input.
@@ -209,6 +216,8 @@ $.fn.autotab = function(options) {
 	};
 
 	$.extend(defaults, options);
+	
+
 
 	// Sets targets to element based on the name or ID
 	// passed if they are not currently objects
